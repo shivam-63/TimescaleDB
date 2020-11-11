@@ -1,5 +1,6 @@
 from psycopg2 import connect
 from csv import reader
+from global_setup import *
 import datetime
 import threading
 import argparse
@@ -53,11 +54,11 @@ class MyThread(threading.Thread):
 
 def main():
     conn = connect(
-        dbname="homework",
-        user="postgres",
-        host="localhost",
-        port="5431",
-        password="password")
+        dbname=DB_NAME,
+        user=USER,
+        host=HOST,
+        port=PORT,
+        password=PASSWORD)
 
     args = parser.parse_args()
 

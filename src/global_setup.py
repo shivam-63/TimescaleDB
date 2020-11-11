@@ -1,0 +1,5 @@
+DB_NAME = "homework"
+USER = "postgres"
+HOST = "localhost"
+PORT = "5431"
+PASSWORD = "password"

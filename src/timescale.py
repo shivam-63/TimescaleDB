@@ -21,45 +21,35 @@ class MyThread(threading.Thread):
         return self.result
 
     def run(self):
-        cursor = self.conn.cursor()
-        while self.hosts_queue:
-            row = self.hosts_queue.pop(0)
-            host = row[0]
-            start_time = row[1]
-            end_time = row[2]
+        with self.conn.cursor() as cursor:
+            while self.hosts_queue:
+                row = self.hosts_queue.pop(0)
+                host = row[0]
+                start_time = row[1]
+                end_time = row[2]
 
-            query_start_time = datetime.datetime.now()
+                query_start_time = datetime.datetime.now()
 
-            # Query execution with time bucket of 1 minute
-            cursor.execute("SELECT time_bucket('1 minute', ts) as one_minute, host, min(usage), max(usage)\
-            from cpu_usage \
-            where host = %s and ts > %s and ts < %s\
-            group by one_minute, host \
-            order by one_minute, host", (host, start_time, end_time))
+                # Query execution with time bucket of 1 minute
+                cursor.execute("SELECT time_bucket('1 minute', ts) as one_minute, host, min(usage), max(usage)\
+                from cpu_usage \
+                where host = %s and ts > %s and ts < %s\
+                group by one_minute, host \
+                order by one_minute, host", (host, start_time, end_time))
 
-            query_end_time = datetime.datetime.now()
+                query_end_time = datetime.datetime.now()
 
-            # Total execution time for query
-            total_time = (query_end_time - query_start_time).microseconds / 1000
+                # Total execution time for query
+                total_time = (query_end_time - query_start_time).microseconds / 1000
 
-            self.result.append(total_time)
+                self.result.append(total_time)
 
-            # print the result of query
-            # for i, record in enumerate(cursor):
-            #     print(record)
-
-        # close the cursor object to avoid memory leaks
-        cursor.close()
+                # # print the result of query
+                # for i, record in enumerate(cursor):
+                #     print(self.thread_name, record)
 
 
 def main():
-    conn = connect(
-        dbname=DB_NAME,
-        user=USER,
-        host=HOST,
-        port=PORT,
-        password=PASSWORD)
-
     args = parser.parse_args()
 
     # Exit if no input file provided
@@ -73,6 +63,12 @@ def main():
     print("Processing with ", args.workers, " workers")
 
     no_of_threads = args.workers
+    conn = connect(
+        dbname=DB_NAME,
+        user=USER,
+        host=HOST,
+        port=PORT,
+        password=PASSWORD)
 
     threads = []
     myDict = {}

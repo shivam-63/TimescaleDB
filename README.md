@@ -1,4 +1,4 @@
-# TimescaleDB
+# Timescale
 
 This tool measures the processing time of each query generated from a provided input file against a database and outputs benchmark stats once
 all queries have been run. The tool provides the following outputs \

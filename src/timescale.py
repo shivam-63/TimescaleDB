@@ -70,8 +70,12 @@ def main():
         port=PORT,
         password=PASSWORD)
 
+    # list for keeping track of each thread
     threads = []
+
+    # Dictionary with thread_no as key and list of hosts executed by that thread as value
     myDict = {}
+
     total_queries = 0
 
     # read query_params.csv from command line argument

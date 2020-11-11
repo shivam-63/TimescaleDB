@@ -4,6 +4,7 @@ import datetime
 import threading
 import argparse
 import statistics
+import os
 
 
 class MyThread(threading.Thread):
@@ -62,7 +63,10 @@ def main():
 
     # Exit if no input file provided
     if args.file is None:
-        print("No input file provided. Exiting Program.......")
+        print("No valid input file provided. Exiting Program.......")
+        exit()
+    if not os.path.exists(args.file):
+        print("No valid input file provided. Exiting Program........")
         exit()
 
     print("Processing with ", args.workers, " workers")
@@ -95,6 +99,7 @@ def main():
 
                 total_queries = total_queries + 1
 
+    # Starting concurrent workers
     for x in range(no_of_threads):
         thread = MyThread(x, "Thread-" + str(x + 1), myDict[x], conn)
         thread.start()
